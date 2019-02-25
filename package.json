@@ -14,7 +14,7 @@
     "react-scripts": "2.1.1",
     "semantic-ui-react": "^0.83.0"
   },
-  "proxy": "http://localhost:8080",
+  "proxy": "http://localhost:9090",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

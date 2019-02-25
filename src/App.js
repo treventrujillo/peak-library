@@ -3,56 +3,59 @@ import { Container, Menu } from 'semantic-ui-react'
 
 import Library from './components/Library';
 import TrackPlayer from './components/TrackPlayer';
-
-import { authentication } from './services/Authentication';
+import MessageBox from './components/MessageBox';
 
 import './App.css';
+import Authentication from './services/Authentication';
+import { authentication } from './services/Authentication';
 
 class App extends Component {
   state = {
     activePage: <Library />,
     activeItem: 'library',
     authorized: false,
-    accessToken: ''
+    message: ''
   }
 
   componentDidMount() {
     const { authorized } = this.state;
-    if (authorized === false || authorized === null) {
-      this.checkAuthorization();
+    if (authorized === false) 
+    {
+      this.displayAuthMessage();
     }
+  }
+
+  displayAuthMessage = () => {
+    this.setState({
+      message:  <MessageBox 
+                  header='You are unauthorized.'
+                  content='Click OK to authenticate with Napster.'
+                  isConfirm={true}
+                  callbackOK={authentication.authenticate}
+                />
+    });
   }
 
   changeActiveItem = (component) => {
     if (component === this.state.activeItem) return; 
-    switch (component) {
-      case 'library':
-        return this.setState({ activePage: <Library />, activeItem: 'library' });
+    switch (component) 
+    {
       case 'trackplayer':
         return this.setState({ activePage: <TrackPlayer />, activeItem: 'trackplayer' });
+      case 'library':
       default:
-        return;
-    }
-  }
-
-  checkAuthorization = () => {
-    const { accessToken, authorized } = this.state;
-    if (accessToken === '' || accessToken === null) {
-      authentication.authenticate();
-    }
-    else
-    {
-
+        return this.setState({ activePage: <Library />, activeItem: 'library' });
     }
   }
 
   render() {
-    let { activePage, activeItem } = this.state;
+    let { activePage, activeItem, message } = this.state;
 
     return (
       <div className="App">
         <Container id="appContainer" fluid style={{padding: '0px'}}>
             <NavMenu activeItem={activeItem} changeActiveItem={this.changeActiveItem} />
+            {message}
             {activePage}
         </Container>
       </div>
