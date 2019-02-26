@@ -13,6 +13,8 @@ html, body {
     height: 100%;
 }
 
+/* Sidebar nav */
+
 #navBarContainer div {
     width: 15em;
 }
@@ -22,4 +24,16 @@ html, body {
     justify-content: flex-start;
     border: none;
     height: 100%;
+}
+
+/* Login Screen */
+
+#Login {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#login-header {
+    margin-top: 10%;
 }
