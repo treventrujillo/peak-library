@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { Container, Button } from 'semantic-ui-react'
+import { Container } from 'semantic-ui-react'
 
 import Library from './components/Library';
 import TrackPlayer from './components/TrackPlayer';
+import Login from './components/Login';
+
 import MessageBox from './components/MessageBox';
 import NavMenu from './components/NavMenu';
 
 import './App.css';
-import { authentication } from './services/Authentication';
 
 class App extends Component {
   state = {
@@ -20,11 +21,11 @@ class App extends Component {
   componentDidMount() {
     const { authorized } = this.state;
     if (authorized === false) {
-      this.displayAuthMessage();
+      this.redirectToLogin();
     }
   }
 
-  displayAuthMessage = () => {
+  redirectToLogin = () => {
     this.setState({
       message:  <MessageBox 
                   header='You are not logged in.'
@@ -33,10 +34,6 @@ class App extends Component {
                   callbackOK={this.redirectToLogin}
                 />
     });
-  }
-
-  redirectToLogin = () => {
-    
   }
 
   changeActiveItem = (component) => {
@@ -66,9 +63,9 @@ class App extends Component {
     }
     else {
       return (
-        <div id="Login">
-            <h2 id="login-header">Welcome to Peak Library</h2>
-            <Button onClick={authentication.authenticate}>Sign in</Button>
+        <div style={{height: '100%'}}>
+          {message}
+          <Login />
         </div>
       );
     }
