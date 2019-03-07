@@ -12,21 +12,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/', (req, res, next) => {
-    console.log(req.body)
     res.send({ express: 'Hello from express' });
-    next();
-});
-
-router.post('/api/authenticate', (req, res, next) => {
-    if (accessToken) return;
-    res.send(getToken());
     next();
 });
 
 router.get('/api/:artist/:album', (req, res, next) => {
     const artist = req.body.artist;
     const album = req.body.album;
-    res.send(getArtistAlbum(artist, album))
+    res.send(getArtistAlbum(artist, album));
     next();
 });
 

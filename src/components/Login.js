@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { Button, Container } from 'semantic-ui-react';
-import { auth } from '../services/Authentication';
 
-const Login = () => {
+const Login = (props) => {
+    let { auth } = props.auth;
     return (
         <div id="Login">
             <Container id="login-container">

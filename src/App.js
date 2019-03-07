@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
 import { Container } from 'semantic-ui-react'
+import {
+   Router, 
+   Route, 
+   Switch,
+   Redirect 
+  } from 'react-router';
+import { CookiesProvider, Cookies, withCookies} from 'react-cookie';
 
 import Library from './components/Library';
 import TrackPlayer from './components/TrackPlayer';
@@ -9,67 +16,67 @@ import MessageBox from './components/MessageBox';
 import NavMenu from './components/NavMenu';
 
 import './App.css';
+import Authentication from './services/Authentication';
+import { instanceOf } from 'prop-types';
+import createBrowserHistory from 'history/createBrowserHistory';
+
+const history = createBrowserHistory();
+let auth = new Authentication();
 
 class App extends Component {
-  state = {
-    activePage: <Library />,
-    activeItem: 'library',
-    authorized: false,
-    message: ''
-  }
-
-  componentDidMount() {
-    const { authorized } = this.state;
-    if (authorized === false) {
-      this.redirectToLogin();
-    }
-  }
-
-  redirectToLogin = () => {
-    this.setState({
-      message:  <MessageBox 
-                  header='You are not logged in.'
-                  content='You will be redirected for sign on.'
-                  isConfirm={true}
-                  callbackOK={this.redirectToLogin}
-                />
-    });
-  }
-
-  changeActiveItem = (component) => {
-    if (component === this.state.activeItem) return; 
-    switch (component) {
-      case 'trackplayer':
-        return this.setState({ activePage: <TrackPlayer />, activeItem: 'trackplayer' });
-      case 'library':
-      default:
-        return this.setState({ activePage: <Library />, activeItem: 'library' });
-    }
-  }
+  static propTypes = {
+    cookies: instanceOf(Cookies).isRequired
+  };
   
+  componentDidMount() {
+    let { cookies } = this.props;
+    auth.checkToken(cookies.get("access_token") ? true : false);
+  }
+
   render() {
-    let { activePage, activeItem, message, authorized } = this.state;
-    
-    if (authorized === true) {
-      return (
-        <div className="App">
-          <Container id="appContainer" fluid style={{padding: '0px'}}>
-              <NavMenu activeItem={activeItem} changeActiveItem={this.changeActiveItem} />
-              {message}
-              {activePage}
-          </Container>
-        </div>
-      );
-    }
-    else {
-      return (
-        <div style={{height: '100%'}}>
-          {message}
-          <Login />
-        </div>
-      );
-    }
+    return (
+      <CookiesProvider>
+        <Router history={history}>
+          <div className="App">
+            <Container id="appContainer" fluid style={{padding: '0px'}}>
+              <NavBar />
+              <Switch>
+                <Redirect from="/" to="/library" />
+                <Route path="/login" render={(props) => <Login {...props} auth={auth}/>} />
+                <PrivateRoute path="/library" render={(props) => <Library {...props} />} />
+                <PrivateRoute path="/trackplayer" render={(props) => <TrackPlayer {...props} />} />
+              </Switch>
+            </Container>
+          </div>
+        </Router>
+      </CookiesProvider>
+    );
   }
 }
 
-export default App;
+function PrivateRoute({component: Component, ...rest}) {
+  return (
+    <Route 
+      {...rest}
+      render={props =>
+      auth.authorized ? (
+        <Component {...props} />
+        ) : (
+          <Redirect
+            to={{pathname: "/login"}}
+          />
+        )
+      }
+    />
+  );
+}
+
+function NavBar() {
+  if (auth.authorized) {
+    return (
+      <NavMenu />
+    );
+  }
+}
+
+export default withCookies(App);
