@@ -23,6 +23,13 @@ router.get('/api/:artist/:album', (req, res, next) => {
     next();
 });
 
+router.get('/api/auth', (req, res, next) => {
+    console.log(req);
+    // Exchange temp token for access 
+    // and return
+    next();
+})
+
 app.use('/', router);
 app.listen(port, () => console.log(`Listening on port ${port}`));
 

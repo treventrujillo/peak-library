@@ -30,6 +30,7 @@ class App extends Component {
   
   componentDidMount() {
     let { cookies } = this.props;
+    debugger;
     auth.checkToken(cookies.get("access_token") ? true : false);
   }
 
@@ -39,8 +40,8 @@ class App extends Component {
         <Router history={history}>
           <div className="App">
             <Container id="appContainer" fluid style={{padding: '0px'}}>
-              <NavBar />
               <Switch>
+                <Navigation />
                 <Redirect from="/" to="/library" />
                 <Route path="/login" render={(props) => <Login {...props} auth={auth}/>} />
                 <PrivateRoute path="/library" render={(props) => <Library {...props} />} />
@@ -71,12 +72,18 @@ function PrivateRoute({component: Component, ...rest}) {
   );
 }
 
-function NavBar() {
-  if (auth.authorized) {
-    return (
-      <NavMenu />
-    );
-  }
+function Navigation() {
+  return (
+    <NavMenu 
+      render={props =>
+      auth.authorized ? (
+        <Component {...props} />
+        ) : (
+          <div></div>
+        )
+      }
+    />
+  );
 }
 
 export default withCookies(App);

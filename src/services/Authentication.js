@@ -1,7 +1,7 @@
 const napsterAPI = 'https://api.napster.com';
 const API_KEY = 'YWZkOTIxNzEtMmQ3OS00ZDA0LTk0MDctYjNhNTBlMDZlY2E4';
 const oauthURL = `${napsterAPI}/oauth/authorize?client_id=${API_KEY}&response_type=code`;
-const REDIRECT_URI = "http://localhost:3000";
+const REDIRECT_URI = "http://localhost:3000/api/auth";
 
 const width = 700;
 const height = 400;
@@ -10,18 +10,12 @@ const top = (window.screen.height / 2) - (height / 2);
 
 export default class Authentication {
 
+    static authorized;
+
     constructor() {
         this.authorized = false;
     }
 
-    get authorized() {
-        return this.authorized;
-    }
-
-    set authorized(value) {
-        this.authorized = value;
-    } 
-    
     checkToken = (tokenValid) => {
         if (tokenValid) {
             this.authorized = tokenValid;
@@ -29,20 +23,23 @@ export default class Authentication {
     }
 
     authenticate = () => {
-        let tempToken = this.requestTempToken();
-        tempToken.then(token => this.requestAccessToken(token));
-        tempToken.catch(error => this.catchException(error));
+        window.open(`${oauthURL}&redirect_uri=${REDIRECT_URI}`, 'Napster', `menubar=no, location=no, resizable=no, scrollbars=no,
+            status=no, width=${width}, height=${height}, top=${top}, left=${left}`)
+        // tempToken.then(token => this.requestAccessToken(token));
+        // tempToken.catch(error => this.catchException(error));
     }
 
     requestTempToken = () => {
-        return new Promise((resolve, reject) => {
-            window.open(`${oauthURL}&redirect_uri=${REDIRECT_URI}`, 'Napster', `menubar=no, location=no, resizable=no, scrollbars=no,
-            status=no, width=${width}, height=${height}, top=${top}, left=${left}`)
+        // return new Promise((resolve, reject) => {
+        //     window.open(`${oauthURL}&redirect_uri=${REDIRECT_URI}`, 'Napster', `menubar=no, location=no, resizable=no, scrollbars=no,
+        //     status=no, width=${width}, height=${height}, top=${top}, left=${left}`)
             
-            resolve(window.URL);
+        //     resolve(window.URL);
 
-            reject(function() { console.log('Authentication failed.'); });
-        });
+        //     reject(function() { console.log('Authentication failed.'); });
+        window.open(`${oauthURL}&redirect_uri=${REDIRECT_URI}`, 'Napster', `menubar=no, location=no, resizable=no, scrollbars=no,
+            status=no, width=${width}, height=${height}, top=${top}, left=${left}`)
+        // });
     }
 
     requestAccessToken = (tempToken) => {
