@@ -27,10 +27,9 @@ class App extends Component {
   static propTypes = {
     cookies: instanceOf(Cookies).isRequired
   };
-  
+
   componentDidMount() {
     let { cookies } = this.props;
-    debugger;
     auth.checkToken(cookies.get("access_token") ? true : false);
   }
 
@@ -40,12 +39,18 @@ class App extends Component {
         <Router history={history}>
           <div className="App">
             <Container id="appContainer" fluid style={{padding: '0px'}}>
+              <Navigation authorized={auth.authorized} />
               <Switch>
-                <Navigation />
-                <Redirect from="/" to="/library" />
-                <Route path="/login" render={(props) => <Login {...props} auth={auth}/>} />
-                <PrivateRoute path="/library" render={(props) => <Library {...props} />} />
-                <PrivateRoute path="/trackplayer" render={(props) => <TrackPlayer {...props} />} />
+                <Route exact path="/" render={(props) => (
+                  (auth.authorized) ? (
+                    <Redirect to="/library" />
+                  ) : (
+                    <Redirect to="/login" />
+                  ))} 
+                />
+                <Route path="/login" render={(props) => <Login {...props} auth={auth} />} />
+                <PrivateRoute path="/library" render={(props) => <Library {...props} />} authorized={auth.authorized} />
+                <PrivateRoute path="/trackplayer" render={(props) => <TrackPlayer {...props} />} authorized={auth.authorized} />
               </Switch>
             </Container>
           </div>
@@ -59,13 +64,14 @@ function PrivateRoute({component: Component, ...rest}) {
   return (
     <Route 
       {...rest}
-      render={props =>
-      auth.authorized ? (
+      render={(props) =>
+      props.authorized ? (
         <Component {...props} />
         ) : (
-          <Redirect
-            to={{pathname: "/login"}}
-          />
+          <Redirect to={{
+            pathname: "/login",
+            state: { from: props.location }
+          }} />
         )
       }
     />
@@ -74,15 +80,11 @@ function PrivateRoute({component: Component, ...rest}) {
 
 function Navigation() {
   return (
-    <NavMenu 
-      render={props =>
-      auth.authorized ? (
-        <Component {...props} />
-        ) : (
-          <div></div>
-        )
-      }
-    />
+    ((props) => props.authorized === true ? (
+      <NavMenu />
+    ) : (
+    <div></div>
+    ))
   );
 }
 
