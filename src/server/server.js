@@ -11,7 +11,7 @@ app.use(cors);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-router.get('/', (req, res, next) => {
+app.get('/', (req, res, next) => {
     res.send({ express: 'Hello from express' });
     next();
 });
@@ -27,6 +27,12 @@ router.get('/api/auth', (req, res, next) => {
     console.log(req);
     // Exchange temp token for access 
     // and return
+    next();
+})
+
+router.get('/api/ping', (req, res, next) => {
+    console.log(req);
+    res.send(`Pinged on port ${port}`)
     next();
 })
 
