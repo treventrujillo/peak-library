@@ -11,6 +11,7 @@ import { CookiesProvider, Cookies, withCookies} from 'react-cookie';
 import Library from './components/Library';
 import TrackPlayer from './components/TrackPlayer';
 import Login from './components/Login';
+import OAuthProxy from './components/OAuthProxy';
 
 import MessageBox from './components/MessageBox';
 import NavMenu from './components/NavMenu';
@@ -39,7 +40,7 @@ class App extends Component {
         <Router history={history}>
           <div className="App">
             <Container id="appContainer" fluid style={{padding: '0px'}}>
-              <Navigation authorized={auth.authorized} />
+              {/* <Navigation authorized={auth.authorized} /> */}
               <Switch>
                 <Route exact path="/" render={(props) => (
                   (auth.authorized) ? (
@@ -49,6 +50,7 @@ class App extends Component {
                   ))} 
                 />
                 <Route path="/login" render={(props) => <Login {...props} auth={auth} />} />
+                <Route path="/proxy" render={(props) => <OAuthProxy {...props} />} />
                 <PrivateRoute path="/library" render={(props) => <Library {...props} />} authorized={auth.authorized} />
                 <PrivateRoute path="/trackplayer" render={(props) => <TrackPlayer {...props} />} authorized={auth.authorized} />
               </Switch>

@@ -5,7 +5,7 @@ import { Button, Container } from 'semantic-ui-react';
 const napsterAPI = 'https://api.napster.com';
 const API_KEY = 'YWZkOTIxNzEtMmQ3OS00ZDA0LTk0MDctYjNhNTBlMDZlY2E4';
 const oauthURL = `${napsterAPI}/oauth/authorize?client_id=${API_KEY}&response_type=code`;
-const REDIRECT_URI = "";
+const REDIRECT_URI = "http://localhost:3000/proxy";
 
 const width = 700;
 const height = 400;
